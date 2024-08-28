@@ -2,12 +2,12 @@ This is a repo for HWMCC'24 submission.
 
 ## Requirements
 I tested with Python 3.11
-### Install Python Packages
+#### Install Python Packages
 ```bash
 pip install -r requirement.txt
 ```
 
-### Compile `kwcount`
+#### Compile `kwcount`
 ```bash
 cd btor2kwcount/
 ./configure.sh
