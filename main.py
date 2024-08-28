@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.10
 
-
-import os
 import sys
-
 import json
 from pathlib import Path
 
