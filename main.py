@@ -6,8 +6,17 @@ import sys
 import joblib
 import json
 from pathlib import Path
+import xgboost as xgb
 
 from create_btor2kw import generate_btor2kw
+
+class PairwiseXGBoost(xgb.XGBClassifier):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def fit(self, X, y, weights):
+        super().fit(X, y, sample_weight=weights)
+        return self
 
 def parse_tool_config(tool_config):
     parts = tool_config.split('.')
@@ -58,7 +67,7 @@ def main():
     selected_lst = get_pw_algorithm_selection_lst(btor2_path, model_matrix)
     selected_id = selected_lst[0]
     selected_tool_config = tool_config_dict[selected_id][1]
-    return parse_tool_config(selected_tool_config)
+    print(parse_tool_config(selected_tool_config))
 
 if __name__ == "__main__":
     main()
