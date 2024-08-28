@@ -54,7 +54,7 @@ def main():
     btor2select_dir = os.path.dirname(this_script_path)
     wheels_dir = Path(btor2select_dir) / "wheels"
     for wheel in wheels_dir.glob("*.whl"):
-        sys.path.append(str(wheel))
+        sys.path.insert(0, str(wheel))
     saved_model_dir = Path(btor2select_dir) / "pw_xg_par2_0826"
     tool_dict_json = Path(btor2select_dir) / "tool_config_dict.json"
     with open(tool_dict_json, 'r') as f:
