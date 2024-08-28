@@ -9,11 +9,10 @@ from pathlib import Path
 
 THIS_SCRIPT_PATH = Path(__file__).resolve()
 BTOR2SELECT_DIR = THIS_SCRIPT_PATH.parent
-WHEELS_DIR = BTOR2SELECT_DIR / "wheels"
+LOCAL_PIPS_DIR = BTOR2SELECT_DIR / "localpips"
 SAVED_MODEL_DIR = BTOR2SELECT_DIR / "pw_xg_par2_0826"
 TOOL_DICT_JSON = Path(BTOR2SELECT_DIR) / "tool_config_dict.json"
-for wheel in WHEELS_DIR.glob("*.whl"):
-    sys.path.insert(0, str(wheel))
+sys.path.append(str(LOCAL_PIPS_DIR))
 
 import numpy as np
 import joblib
