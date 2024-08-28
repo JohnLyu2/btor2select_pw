@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
 
-import numpy as np
+
 import os
 import sys
-import joblib
+
 import json
 from pathlib import Path
+
+THIS_SCRIPT_PATH = Path(__file__).resolve()
+BTOR2SELECT_DIR = THIS_SCRIPT_PATH.parent
+WHEELS_DIR = BTOR2SELECT_DIR / "wheels"
+SAVED_MODEL_DIR = BTOR2SELECT_DIR / "pw_xg_par2_0826"
+TOOL_DICT_JSON = Path(BTOR2SELECT_DIR) / "tool_config_dict.json"
+for wheel in WHEELS_DIR.glob("*.whl"):
+    sys.path.insert(0, str(wheel))
+
+import numpy as np
+import joblib
 import xgboost as xgb
 
 from create_btor2kw import generate_btor2kw
@@ -43,21 +54,14 @@ def get_pw_algorithm_selection_lst(btor2_path, model_matrix, random_seed = 0):
     return sorted_indices
 
 def main():
-    this_script_path = os.path.realpath(__file__)
     if len(sys.argv) != 2:
-        print(f"Usage: {this_script_path} <btor2_path>")
+        print(f"Usage: {THIS_SCRIPT_PATH} <btor2_path>")
         return
     btor2_path = sys.argv[1]
     if not Path(btor2_path).is_file():
         print(f"The provided btor2 file does not exist: {btor2_path}")
         return
-    btor2select_dir = os.path.dirname(this_script_path)
-    wheels_dir = Path(btor2select_dir) / "wheels"
-    for wheel in wheels_dir.glob("*.whl"):
-        sys.path.insert(0, str(wheel))
-    saved_model_dir = Path(btor2select_dir) / "pw_xg_par2_0826"
-    tool_dict_json = Path(btor2select_dir) / "tool_config_dict.json"
-    with open(tool_dict_json, 'r') as f:
+    with open(TOOL_DICT_JSON, 'r') as f:
         tool_config_dict = json.load(f)
     # convert tool_config_dict key to integer
     tool_config_dict = {int(k): v for k, v in tool_config_dict.items()}
@@ -66,7 +70,7 @@ def main():
     model_matrix[:] = None
     for i in range(tool_config_size):
         for j in range(i+1, tool_config_size):  
-            model_matrix[i, j] = joblib.load(saved_model_dir / f"xg_{i}_{j}.joblib")
+            model_matrix[i, j] = joblib.load(SAVED_MODEL_DIR / f"xg_{i}_{j}.joblib")
     selected_lst = get_pw_algorithm_selection_lst(btor2_path, model_matrix)
     selected_id = selected_lst[0]
     selected_tool_config = tool_config_dict[selected_id][1]
