@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-BTOR2KW_BINARY = "btor2kwcount/build/bin/kwcount"
+BTOR2KW_BINARY = Path(__file__).parent.resolve() / "btor2kwcount/build/bin/kwcount"
 
 KEYWORDS = [
     "add",
