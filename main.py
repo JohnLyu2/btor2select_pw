@@ -10,7 +10,7 @@ BTOR2SELECT_DIR = THIS_SCRIPT_PATH.parent
 LOCAL_PIPS_DIR = BTOR2SELECT_DIR / "lib"
 SAVED_MODEL_DIR = BTOR2SELECT_DIR / "pw_xg_par2_0826"
 TOOL_DICT_JSON = Path(BTOR2SELECT_DIR) / "tool_config_dict.json"
-sys.path.append(str(LOCAL_PIPS_DIR))
+sys.path.insert(0, str(LOCAL_PIPS_DIR))
 sys.dont_write_bytecode = True  # prevents writing .pyc files
 
 import numpy as np
