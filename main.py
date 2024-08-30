@@ -3,6 +3,7 @@
 import sys
 import json
 from pathlib import Path
+import logging
 
 THIS_SCRIPT_PATH = Path(__file__).resolve()
 BTOR2SELECT_DIR = THIS_SCRIPT_PATH.parent
@@ -10,6 +11,7 @@ LOCAL_PIPS_DIR = BTOR2SELECT_DIR / "lib"
 SAVED_MODEL_DIR = BTOR2SELECT_DIR / "pw_xg_par2_0826"
 TOOL_DICT_JSON = Path(BTOR2SELECT_DIR) / "tool_config_dict.json"
 sys.path.append(str(LOCAL_PIPS_DIR))
+sys.dont_write_bytecode = True  # prevents writing .pyc files
 
 import numpy as np
 import joblib
@@ -60,14 +62,14 @@ def get_pw_algorithm_selection_lst(btor2_path, model_matrix, random_seed=0):
     return sorted_indices
 
 
-def main():
-    if len(sys.argv) != 2:
-        print(f"Usage: {THIS_SCRIPT_PATH} <btor2_path>")
-        return
-    btor2_path = sys.argv[1]
+def main(argv):
+    if len(argv) != 2:
+        logging.error(f"Usage: {THIS_SCRIPT_PATH} <btor2_path>")
+        exit(1)
+    btor2_path = argv[1]
     if not Path(btor2_path).is_file():
-        print(f"The provided btor2 file does not exist: {btor2_path}")
-        return
+        logging.error(f"The provided btor2 file does not exist: {btor2_path}")
+        exit(1)
     with open(TOOL_DICT_JSON, "r") as f:
         tool_config_dict = json.load(f)
     # convert tool_config_dict key to integer
@@ -81,8 +83,11 @@ def main():
     selected_lst = get_pw_algorithm_selection_lst(btor2_path, model_matrix)
     selected_id = selected_lst[0]
     selected_tool_config = tool_config_dict[selected_id][1]
-    print(parse_tool_config(selected_tool_config))
+    selected_tool_config = parse_tool_config(selected_tool_config)
+    logging.info("Selected tool configuration: %s", selected_tool_config)
+    return selected_tool_config
 
 
 if __name__ == "__main__":
-    main()
+    logging.basicConfig(format="[%(levelname)s] %(message)s", level=logging.INFO)
+    main(sys.argv)
