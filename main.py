@@ -15,7 +15,10 @@ import numpy as np
 import joblib
 import xgboost as xgb
 
-from create_btor2kw import generate_btor2kw
+try:
+    from .create_btor2kw import generate_btor2kw
+except ImportError:
+    from create_btor2kw import generate_btor2kw
 
 
 class PairwiseXGBoost(xgb.XGBClassifier):
