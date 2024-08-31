@@ -15,7 +15,7 @@ List of our component verifiers (tool: algorithms>):
 * [Pono](https://github.com/stanford-centaur/pono): BMC, ic3bits, ic3sa, ind, interp
 
 ### Algorithm Selection Model
-Our algorithm selectors are based on [cost-sensitive pairwise classifiers](http://www.cs.ubc.ca/labs/beta/Projects/SATzilla/SATzilla2012final.pdf), a widely used approach in algorithm selection. During training, a binary classifier is trained for each pair of component verifiers to predict which one would perform better in terms of the PAR-2 score. Each training sample is weighted by the PAR-2 difference between the pair of verifiers. During inference, for a given instance, all pairwise classifiers are evaluated, and the verifier that receives the highest votes from these classifiers is selected. We use [XGBoost](https://xgboost.readthedocs.io/en/stable/) as the classifier model. 
+Our algorithm selectors are based on [cost-sensitive pairwise classifiers](http://www.cs.ubc.ca/labs/beta/Projects/SATzilla/SATzilla2012final.pdf), a widely used approach in algorithm selection. During training, a binary classifier is trained for each pair of component verifiers to predict which one would perform better in terms of the PAR-2 score. Each training sample is weighted by the PAR-2 difference between the verifier pair. During inference, for a given instance, all pairwise classifiers are evaluated, and the verifier that receives the highest votes from these classifiers is selected. We use [XGBoost](https://xgboost.readthedocs.io/en/stable/) as the classifier model. 
 
 ### Instance Feature
 Btor2 instances are represented as Bag of Keywords, which counts the occurrence of each keyword in the file. We have identified a total of 70 keywords, such as *state*,  *not*, and *add*.
