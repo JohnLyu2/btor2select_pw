@@ -34,4 +34,4 @@ The evaluation shows our trained portfolio verifier was able to solve 215 out of
 * [Vijay Ganesh](https://vganesh1.github.io/)
 
 ## License
-Btor2Select is licensed under the Apache 2.0 License. The submodule `btor2kwcount` is largely based on codes from [Btor2Tools](https://github.com/Boolector/btor2tools), which is licensed under the [MIT License](btor2kwcount/LICENSE.txt).
+Btor2Select is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0). The submodule `btor2kwcount` is largely based on codes from [Btor2Tools](https://github.com/Boolector/btor2tools), which is licensed under the [MIT License](btor2kwcount/LICENSE.txt).
