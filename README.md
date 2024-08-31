@@ -19,3 +19,10 @@ Our algorithm selectors are based on [cost-sensitive pairwise classifiers](http:
 
 ### Instance Feature
 Btor2 instances are represented as Bag of Keywords, which counts the occurrence of each keyword in the file. We have identified a total of 70 keywords, such as *state*,  *not*, and *add*.
+
+### Training \& Testing
+We have collected a comprehensive [word-level hardware model-checking benchmark dataset](https://gitlab.com/sosy-lab/research/data/word-level-hwmc-benchmarks/). In this study, we only focus on the benchmarks without arrays. All 1,441 such benchmarks in the dataset were divided into training and testing sets with an 80-20 split. 
+
+The pairwise XGBoost models were trained on a MacBook Air with an M2 chip and 8 GB memory. All executions of the verifier-instance pair were conducted on machines running Ubuntu 22.04 (64 bit), each with a 3.4 GHz CPU (Intel Xeon E3-1230 v5) with 8 processing units and 33 GB of RAM. Each task was limited to 2 CPU cores, 15 min of CPU time, and 15 GB of RAM. We used [BenchExec](https://github.com/sosy-lab/benchexec) to ensure reliable resource measurement and reproducible results. 
+
+The evaluation shows our trained portfolio verifier was able to solve 215 out of 288 test instances, outperforming the single best solver ABC.SCORR-PDR by 20 instances. It impressively closed 68.5% of the PAR-2 performance gap between the SBS and the virtual best solver (VBS). 
