@@ -1,4 +1,4 @@
-Btor2Select is an algorithm selector for hardware modeling checking problems in the Btor2 format.
+Btor2-Select is an algorithm selector for hardware modeling checking problems in the Btor2 format.
 
 ## Component Verifiers
 Here, a verifier refers to the implementation of a specific verification algorithm within a particular tool. Our algorithm portfolio includes a total of 21 component verifiers. In addition to hardware verifiers, our selector also supports the selection of software verifiers for Btor2 instances by first translating them into behaviorally equivalent C programs using [Btor2C](https://gitlab.com/sosy-lab/software/btor2c).
@@ -34,4 +34,4 @@ The evaluation shows our trained portfolio verifier was able to solve 215 out of
 * [Vijay Ganesh](https://vganesh1.github.io/)
 
 ## License
-Btor2Select is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0). The submodule `btor2kwcount` is largely based on codes from [Btor2Tools](https://github.com/Boolector/btor2tools), which is licensed under the [MIT License](btor2kwcount/LICENSE.txt).
+Btor2-Select is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0). The submodule `btor2kwcount` is largely based on codes from [Btor2Tools](https://github.com/Boolector/btor2tools), which is licensed under the [MIT License](btor2kwcount/LICENSE.txt).
