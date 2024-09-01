@@ -1,5 +1,5 @@
 cd btor2kwcount/
-./configure.sh
+./configure.sh --static
 cd build
 make
 cd ../..
