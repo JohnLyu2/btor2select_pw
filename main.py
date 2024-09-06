@@ -8,7 +8,7 @@ import logging
 THIS_SCRIPT_PATH = Path(__file__).resolve()
 BTOR2SELECT_DIR = THIS_SCRIPT_PATH.parent
 LOCAL_PIPS_DIR = BTOR2SELECT_DIR / "lib"
-SAVED_MODEL_DIR = BTOR2SELECT_DIR / "pw_xg_par2_0826"
+SAVED_MODEL_DIR = BTOR2SELECT_DIR / "hwmcc_model"
 TOOL_DICT_JSON = Path(BTOR2SELECT_DIR) / "tool_config_dict.json"
 sys.path.insert(0, str(LOCAL_PIPS_DIR))
 sys.dont_write_bytecode = True  # prevents writing .pyc files
@@ -18,9 +18,9 @@ import joblib
 import xgboost as xgb
 
 try:
-    from .create_btor2kw import generate_btor2kw
+    from .create_btor2kw import get_kwcounts
 except ImportError:
-    from create_btor2kw import generate_btor2kw
+    from create_btor2kw import get_kwcounts
 
 
 class PairwiseXGBoost(xgb.XGBClassifier):
@@ -39,26 +39,26 @@ def parse_tool_config(tool_config):
     raise ValueError(f"Invalid tool configuration: {tool_config}")
 
 
-def get_pw_algorithm_selection_lst(btor2_path, model_matrix, random_seed=0):
-    btor2kw = generate_btor2kw(btor2_path)
+def get_pw_algorithm_selection_lst(btor2_path, model_matrix, feature_func, random_seed = 0, exclude_lst = None):
+    btor2kw = feature_func(btor2_path)
     btor2kw_array = np.array(btor2kw).reshape(1, -1)
     config_size = model_matrix.shape[0]
     votes = np.zeros(config_size, dtype=int)
     for i in range(config_size):
-        for j in range(i + 1, config_size):
+        if exclude_lst is not None and i in exclude_lst:
+            continue
+        for j in range(i+1, config_size):
+            if exclude_lst is not None and j in exclude_lst:
+                continue
             prediction = model_matrix[i, j].predict(btor2kw_array)
-            if prediction[0]:  # i is better
+            if prediction[0]: # i is better
                 votes[i] += 1
             else:
                 votes[j] += 1
     np.random.seed(random_seed)
     random_tiebreaker = np.random.random(config_size)
-    structured_votes = np.rec.fromarrays(
-        [votes, random_tiebreaker], names="votes, random_tiebreaker"
-    )
-    sorted_indices = np.argsort(structured_votes, order=("votes", "random_tiebreaker"))[
-        ::-1
-    ]
+    structured_votes = np.rec.fromarrays([votes, random_tiebreaker], names='votes, random_tiebreaker')
+    sorted_indices = np.argsort(structured_votes, order=('votes', 'random_tiebreaker'))[::-1]
     return sorted_indices
 
 
@@ -80,7 +80,8 @@ def main(argv):
     for i in range(tool_config_size):
         for j in range(i + 1, tool_config_size):
             model_matrix[i, j] = joblib.load(SAVED_MODEL_DIR / f"xg_{i}_{j}.joblib")
-    selected_lst = get_pw_algorithm_selection_lst(btor2_path, model_matrix)
+    excludes = [2,12,15,7,16,22] # lists of tool-configs that may produce error results
+    selected_lst = get_pw_algorithm_selection_lst(btor2_path, model_matrix, get_kwcounts, exclude_lst=excludes)
     selected_id = selected_lst[0]
     selected_tool_config = tool_config_dict[selected_id][1]
     selected_tool_config = parse_tool_config(selected_tool_config)

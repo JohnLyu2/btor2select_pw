@@ -12,7 +12,7 @@ btormc,bmc
 btormc,kind
 btormc,kind-sp
 cbmc,bmc
-cbmc,bmc-ag
+cbmc,kind
 cpachecker,imc
 esbmc,bmc-5-boolector
 esbmc,kind

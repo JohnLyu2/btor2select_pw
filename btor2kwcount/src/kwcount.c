@@ -12,7 +12,7 @@ static const char* input_name;
 
 /* Parse BTOR2 file and count the keywords. */
 
-#define NUM_KEYWORDS 70
+#define NUM_KEYWORDS 69
 
 typedef struct {
     const char *keyword;
@@ -35,15 +35,14 @@ const Keyword KEYWORDS[NUM_KEYWORDS] = {
     {"saddo", 36}, {"sext", 37}, {"sgt", 38},
     {"sgte", 39}, {"sdiv", 40}, {"sdivo", 41},
     {"slice", 42}, {"sll", 43}, {"slt", 44},
-    {"slte", 45}, {"sort_bitvec", 46}, {"sort_array", 47},
-    {"smod", 48}, {"smulo", 49}, {"ssubo", 50},
-    {"sra", 51}, {"srl", 52}, {"srem", 53},
-    {"state", 54}, {"sub", 55}, {"uaddo", 56},
-    {"udiv", 57}, {"uext", 58}, {"ugt", 59},
-    {"ugte", 60}, {"ult", 61}, {"ulte", 62},
-    {"umulo", 63}, {"urem", 64}, {"usubo", 65},
-    {"write", 66}, {"xnor", 67}, {"xor", 68},
-    {"zero", 69}
+    {"slte", 45}, {"sort", 46}, {"smod", 47},
+    {"smulo", 48}, {"ssubo", 49}, {"sra", 50},
+    {"srl", 51}, {"srem", 52}, {"state", 53},
+    {"sub", 54}, {"uaddo", 55}, {"udiv", 56},
+    {"uext", 57}, {"ugt", 58}, {"ugte", 59},
+    {"ult", 60}, {"ulte", 61}, {"umulo", 62},
+    {"urem", 63}, {"usubo", 64}, {"write", 65},
+    {"xnor", 66}, {"xor", 67}, {"zero", 68}
 };
 
 int get_keyword_id(const char* keyword, const Keyword keywords[], int num_keywords);
@@ -127,36 +126,63 @@ main (int32_t argc, char** argv)
   }
   it = btor2parser_iter_init (reader);
   int counters[NUM_KEYWORDS] = {0};
+  int bits[NUM_KEYWORDS] = {0};
+  // unsigned int state_bit_width_sum = 0;
+  // unsigned int input_bit_width_sum = 0;
   while ((l = btor2parser_iter_next (&it)))
   {
     // printf ("%" PRId64 " %s", l->id, l->name);
     int keyword_id = -1;
-    if (l->tag == BTOR2_TAG_sort)
+    int bit_width;
+    // if (l->tag == BTOR2_TAG_sort)
+    // {
+    //   // printf (" %s", l->sort.name);
+    //   bit_width = l->sort.bitvec.width;
+    //   switch (l->sort.tag)
+    //   {
+    //     case BTOR2_TAG_SORT_bitvec: 
+    //       // printf (" %u", l->sort.bitvec.width); break;
+    //       keyword_id = get_keyword_id("sort_bitvec", KEYWORDS, NUM_KEYWORDS);
+    //       break;
+    //     case BTOR2_TAG_SORT_array:
+    //       // printf (" %" PRId64 " %" PRId64, l->sort.array.index, l->sort.array.element);
+    //       keyword_id = get_keyword_id("sort_array", KEYWORDS, NUM_KEYWORDS);
+    //       break;
+    //     default:
+    //       assert (0);
+    //       fprintf (stderr, "*** invalid sort encountered\n");
+    //       exit (1);
+    //   }
+    // }
+    // else
+    // {
+      // if (l->tag == BTOR2_TAG_state)
+      // {
+      //   assert (l->sort.tag == BTOR2_TAG_SORT_bitvec);
+      //   state_bit_width_sum += l->sort.bitvec.width;
+      //   // printf("state bit width: %u\n", state_bit_width_sum);
+
+      // } else if (l->tag == BTOR2_TAG_input)
+      // {
+      //   assert (l->sort.tag == BTOR2_TAG_SORT_bitvec);
+      //   input_bit_width_sum += l->sort.bitvec.width;
+      //   // printf("input bit width: %u\n", input_bit_width_sum);
+      // }
+    keyword_id = get_keyword_id(l->name, KEYWORDS, NUM_KEYWORDS);
+    if (l->tag == BTOR2_TAG_bad || l->tag == BTOR2_TAG_constraint \
+        || l->tag == BTOR2_TAG_fair || l->tag == BTOR2_TAG_output \
+        || l->tag == BTOR2_TAG_justice)
     {
-      // printf (" %s", l->sort.name);
-      switch (l->sort.tag)
-      {
-        case BTOR2_TAG_SORT_bitvec: 
-          // printf (" %u", l->sort.bitvec.width); break;
-          keyword_id = get_keyword_id("sort_bitvec", KEYWORDS, NUM_KEYWORDS);
-          break;
-        case BTOR2_TAG_SORT_array:
-          // printf (" %" PRId64 " %" PRId64, l->sort.array.index, l->sort.array.element);
-          keyword_id = get_keyword_id("sort_array", KEYWORDS, NUM_KEYWORDS);
-          break;
-        default:
-          assert (0);
-          fprintf (stderr, "*** invalid sort encountered\n");
-          exit (1);
-      }
-    }
-    else
+      bit_width = 1;
+    } else 
     {
-      keyword_id = get_keyword_id(l->name, KEYWORDS, NUM_KEYWORDS);
+      assert (l->sort.tag == BTOR2_TAG_SORT_bitvec);
+      bit_width = l->sort.bitvec.width;
     }
     if (keyword_id != -1)
     {
       counters[keyword_id]++;
+      bits[keyword_id] += bit_width;
     } else {
       fprintf(stderr, "Keyword not found: %s\n", l->name);
       exit (1);
@@ -165,6 +191,10 @@ main (int32_t argc, char** argv)
   btor2parser_delete (reader);
   for (int i = 0; i < NUM_KEYWORDS; i++) {
         printf("%d ", counters[i]);
+  }
+  printf("\n");
+  for (int i = 0; i < NUM_KEYWORDS; i++) {
+        printf("%d ", bits[i]);
   }
   printf("\n");
   return 0;
