@@ -3,4 +3,4 @@
 .vscode
 __pycache__/
 
-# btor2kwcount/build
+btor2kwcount/build
