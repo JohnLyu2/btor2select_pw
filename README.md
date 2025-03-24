@@ -1,3 +1,7 @@
+This repository is an archived and inactive version of an early prototype of [Btor2-Select](https://gitlab.com/sosy-lab/software/btor2-select). For the active and maintained version, please visit: https://gitlab.com/sosy-lab/software/btor2-select.
+
+---
+
 Btor2-Select is an algorithm selector for hardware modeling checking problems in the Btor2 format.
 
 ## Component Verifiers
